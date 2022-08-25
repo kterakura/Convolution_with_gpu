@@ -1,9 +1,30 @@
+#if defined(_WIN32) || (_MSC_VER)
+#define VC_MODE
+#endif
 
-#include <cuda_runtime.h>
-#include <stdio.h>
-
+#ifdef VC_MODE
 #include <sys/types.h>
 #include <sys/timeb.h>
+#else
+#include <sys/time.h>
+#endif
+
+#ifdef VC_MODE
+inline double cpuSecond()
+{
+    _timeb tp;
+    _ftime(&tp);
+    return ((double)tp.time + (double)tp.millitm / 1000.0);
+}
+#else
+inline double cpuSecond()
+{
+    struct timeval tp;
+    struct timezone tzp;
+    int i = gettimeofday(&tp, &tzp);
+    return ((double)tp.tv_sec + (double)tp.tv_usec * 1.e-6);
+}
+#endif
 
 #define CHECK(call)                                                  \
 {                                                                    \
@@ -15,13 +36,6 @@
                 cudaGetErrorString(error));                          \
         exit(1);                                                     \
     }                                                                \
-}
-
-double cpuSecond()
-{
-    _timeb tp;
-    _ftime(&tp);
-    return ((double)tp.time + (double)tp.millitm / 1000.0);
 }
 
 void checkResult(float *hostRef, float *gpuRef, const int N)
