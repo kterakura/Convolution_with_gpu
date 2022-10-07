@@ -5,3 +5,14 @@
 /cnn2.exe
 /cnn2.exp
 /cnn2.lib
+/*.exe
+/*.lib
+/*.exp
+/*.sln
+/*.vcxproj
+/*.filters
+/*.user
+/x64
+/x64
+/profile
+/.vs
